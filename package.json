@@ -1,0 +1,22 @@
+{
+  "name": "ordo-docs",
+  "version": "1.0.0",
+  "description": "Documentation site for Ordo — a modern project orchestrator for C and C++",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "license": "MIT",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "^11.5.1",
+      "onFail": "download"
+    }
+  },
+  "type": "module",
+  "devDependencies": {
+    "vitepress": "^1.6.4"
+  }
+}
