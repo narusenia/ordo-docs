@@ -55,7 +55,7 @@ source = "path+../core"
 | `name` | string | Yes | パッケージ名 |
 | `version` | string | Yes | 解決されたバージョン |
 | `source` | string | Yes | タイプ接頭辞付きのソースURI |
-| `checksum` | string | No | `sha256:<hex>` インテグリティハッシュ |
+| `checksum` | string | No | インテグリティハッシュ。git依存: `git:<commit-hash>`、その他: `sha256:<hex>`（将来対応） |
 | `script-hash` | string | No | Luaビルドスクリプトの SHA-256 ハッシュ（`with` 付きgit依存のみ） |
 
 ### ソース接頭辞

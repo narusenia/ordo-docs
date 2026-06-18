@@ -1,9 +1,5 @@
 # Workspace
 
-::: warning UNRELEASED
-Workspace support is available in the development branch and will be included in the next release.
-:::
-
 A workspace lets you manage multiple related projects in a single repository. Dependencies, toolchain settings, and build artifacts are shared across all members.
 
 ## Setting Up a Workspace

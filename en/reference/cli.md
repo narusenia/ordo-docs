@@ -8,6 +8,7 @@ These flags are available on all commands:
 |------|-------------|
 | `--color <MODE>` | Control colored output: `auto`, `always`, `never`. Default: `auto`. Env: `ORDO_COLOR` |
 | `-v, --verbose` | Verbose output. Use `-v` to show compiler commands, `-vv` for debug logging |
+| `--style <MODE>` | Output style: `default`, `minimal`, `cargo-like`. Default: `default`. Env: `ORDO_CLI_STYLE` |
 
 ## Commands
 

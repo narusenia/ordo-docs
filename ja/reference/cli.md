@@ -2,12 +2,13 @@
 
 ## グローバルフラグ
 
-すべてのコマンドで使用可能なフラグです。
+すべてのコマンドで使用できるフラグです。
 
 | フラグ | 説明 |
 |------|------|
-| `--color <MODE>` | カラー出力の制御。`auto`、`always`、`never`。デフォルト: `auto`。環境変数: `ORDO_COLOR` |
-| `-v, --verbose` | 詳細出力。`-v` でコンパイラコマンドを表示、`-vv` でデバッグログを出力 |
+| `--color <MODE>` | カラー出力の制御。`auto`、`always`、`never` から選択します。デフォルトは `auto` です。環境変数 `ORDO_COLOR` でも設定できます |
+| `-v, --verbose` | 詳細出力を有効にします。`-v` でコンパイラコマンドを表示、`-vv` でデバッグログを表示します |
+| `--style <MODE>` | 出力スタイル。`default`、`minimal`、`cargo-like` から選択します。デフォルトは `default` です。環境変数 `ORDO_CLI_STYLE` でも設定できます |
 
 ## コマンド
 
@@ -17,22 +18,22 @@
 
 ```sh
 ordo new myapp              # C++ 実行ファイル（デフォルト）
-ordo new mylib --lib        # 静的ライブラリ
+ordo new mylib --lib        # スタティックライブラリ
 ordo new myapp --lang c     # C プロジェクト
 ordo new                    # インタラクティブモード
 ```
 
 | フラグ | 説明 |
 |------|------|
-| `--lib` | 実行ファイルの代わりにライブラリプロジェクトを作成 |
-| `--lang <LANG>` | プロジェクト言語。`c` または `cpp`（デフォルト: `cpp`） |
-| `--no-git` | git初期化をスキップ |
+| `--lib` | 実行ファイルの代わりにライブラリプロジェクトを作成します |
+| `--lang <LANG>` | プロジェクト言語。`c` または `cpp` を指定します（デフォルトは `cpp`） |
+| `--no-git` | git の初期化をスキップします |
 
-`NAME` を省略すると、プロジェクト名・言語・タイプを対話的に入力するインタラクティブモードになります。
+`NAME` を省略すると、Ordo はインタラクティブモードに入り、プロジェクト名、言語、タイプを対話的に選択できます。
 
 ### `ordo init`
 
-既存のディレクトリでOrdoを初期化します。プロジェクトタイプは自動検出されます。`src/` に `main.cpp` や `main.c` があれば実行ファイル、なければライブラリとして設定されます。
+既存のディレクトリで Ordo を初期化します。プロジェクトタイプは自動検出されます。`src/` に `main.cpp` または `main.c` が存在する場合は実行ファイル、それ以外はライブラリとして設定されます。
 
 `Ordo.toml` がすでに存在する場合は失敗します。
 
@@ -43,28 +44,28 @@ ordo new                    # インタラクティブモード
 ```sh
 ordo build                  # デバッグビルド
 ordo build --release        # リリースビルド
-ordo build --profile asan   # カスタムプロファイル
-ordo build -p core          # ワークスペースの特定メンバーをビルド
-ordo build --locked         # Ordo.lock が不整合なら失敗
+ordo build --profile asan   # 名前付きプロファイル
+ordo build -p core          # 特定のワークスペースメンバーをビルド
+ordo build --locked         # Ordo.lock が同期していなければ失敗
 ```
 
 | フラグ | 説明 |
 |------|------|
-| `--release` | リリースプロファイルでビルド |
-| `--profile <NAME>` | カスタムプロファイルでビルド（`--release` と排他） |
-| `-j, --jobs <N>` | Ninjaの並列ジョブ数 |
-| `--target <TRIPLE>` | クロスコンパイル用のターゲットトリプル |
-| `--no-cache` | ビルドキャッシュを無効化 |
-| `--features <LIST>` | 有効にする機能（カンマ区切り） |
-| `--no-default-features` | デフォルト機能を無効化 |
-| `--all-features` | すべての機能を有効化 |
-| `--locked` | `Ordo.lock` が `Ordo.toml` と不整合ならエラー |
-| `--frozen` | ネットワークアクセスを禁止。キャッシュ済みの依存のみ使用 |
-| `-p, --package <NAME>` | ワークスペースの特定メンバーをビルド |
+| `--release` | release プロファイルでビルドします |
+| `--profile <NAME>` | 名前付きプロファイルでビルドします（`--release` と併用不可） |
+| `-j, --jobs <N>` | Ninja の並列ジョブ数を指定します |
+| `--target <TRIPLE>` | クロスコンパイル用のターゲットトリプルを指定します |
+| `--no-cache` | ビルドキャッシュを無効にします |
+| `--features <LIST>` | 有効にするフィーチャーをカンマ区切りで指定します |
+| `--no-default-features` | デフォルトフィーチャーを無効にします |
+| `--all-features` | すべてのフィーチャーを有効にします |
+| `--locked` | `Ordo.lock` が `Ordo.toml` と同期していない場合にエラーを返します |
+| `--frozen` | ネットワークアクセスを禁止し、キャッシュされた依存関係のみを使用します |
+| `-p, --package <NAME>` | 特定のワークスペースメンバーをビルドします |
 
 ### `ordo run [-- ARGS...]`
 
-プロジェクトをビルドして実行します。`--` 以降の引数はバイナリに渡されます。
+プロジェクトをビルドして実行します。`--` の後の引数はビルドされたバイナリに渡されます。
 
 ```sh
 ordo run
@@ -75,54 +76,56 @@ ordo run -- --config myconfig.toml
 
 | フラグ | 説明 |
 |------|------|
-| `--release` | リリースプロファイルでビルド |
-| `-p, --package <NAME>` | ワークスペースの特定メンバーを実行 |
+| `--release` | release プロファイルでビルドします |
+| `-p, --package <NAME>` | 特定のワークスペースメンバーを実行します |
 
 プロジェクトタイプが `executable` でない場合は失敗します。
 
 ### `ordo add <SPEC>`
 
-依存を `Ordo.toml` に追加します。
+`Ordo.toml` に依存関係を追加します。
 
 ```sh
 ordo add vcpkg:fmt@11.2.0
 ordo add conan:sdl@3.4.8
 ordo add system:m
 ordo add git:fmtlib/fmt@11.1.0
-ordo add raylib                  # プロバイダを対話的に選択
+ordo add raylib                  # インタラクティブにプロバイダーを選択
 ```
 
-specの形式は `[provider:]name[@version]` です。
+spec のフォーマットは `[provider:]name[@version]` です。
 
 | フラグ | 説明 |
 |------|------|
-| `-P, --provider <NAME>` | プロバイダを明示的に指定 |
-| `--no-verify` | プロバイダへの問い合わせをスキップ（オフライン用） |
-| `--with <SCRIPT>` | Luaビルドスクリプトのパス（git依存のみ） |
+| `-P, --provider <NAME>` | プロバイダーを明示的に指定します |
+| `--no-verify` | プロバイダーへの検証をスキップします（オフライン利用向け） |
+| `--with <SCRIPT>` | Lua ビルドスクリプトのパスを指定します（git 依存関係のみ） |
 
-specにも `--provider` フラグにもプロバイダが指定されていない場合、対話的に選択するプロンプトが表示されます。
+spec と `--provider` フラグの両方でプロバイダーが省略された場合、Ordo は対話的に選択を促します。
 
 ### `ordo update [NAME]`
 
-依存を再解決し、`Ordo.lock` を更新します。
+依存関係を再解決し、`Ordo.lock` を更新します。
 
 ```sh
 ordo update             # すべて再解決
-ordo update fmt         # 特定の依存のみ再解決
+ordo update fmt         # 特定の依存関係を再解決
 ```
+
+`NAME` を指定すると、その依存関係のみが再解決されます。
 
 ### `ordo tree`
 
-依存ツリーを表示します。
+依存関係ツリーを表示します。
 
 ```sh
 ordo tree
-ordo tree -p core       # ワークスペースの特定メンバーのツリーを表示
+ordo tree -p core       # 特定のワークスペースメンバーのツリーを表示
 ```
 
 | フラグ | 説明 |
 |------|------|
-| `-p, --package <NAME>` | ワークスペースの特定メンバーのツリーを表示 |
+| `-p, --package <NAME>` | 特定のワークスペースメンバーのツリーを表示します |
 
 ### `ordo clean`
 
@@ -131,33 +134,33 @@ ordo tree -p core       # ワークスペースの特定メンバーのツリー
 ```sh
 ordo clean
 ordo clean --cache      # 外部ビルドキャッシュも削除
-ordo clean -p core      # ワークスペースの特定メンバーをクリーン
+ordo clean -p core      # 特定のワークスペースメンバーをクリーン
 ```
 
 | フラグ | 説明 |
 |------|------|
-| `--cache` | 外部ビルドキャッシュ（ccache/sccache）も削除 |
-| `-p, --package <NAME>` | ワークスペースの特定メンバーをクリーン |
+| `--cache` | 外部ビルドキャッシュ（ccache/sccache）も削除します |
+| `-p, --package <NAME>` | 特定のワークスペースメンバーをクリーンします |
 
 ## 未実装のコマンド
 
-以下のコマンドは定義済みですが、まだ実装されていません。
+以下のコマンドは定義されていますが、まだ機能していません。
 
 | コマンド | 説明 |
 |---------|------|
-| `ordo test` | テストフレームワークの自動検出とテスト実行 |
-| `ordo check` | バイナリを生成しない構文チェック |
-| `ordo fmt` | clang-formatによるコードフォーマット |
-| `ordo lint` | clang-tidyによるリント |
+| `ordo test` | フレームワーク自動検出によるテスト実行 |
+| `ordo check` | バイナリを生成せずに構文チェック |
+| `ordo fmt` | clang-format によるコードフォーマット |
+| `ordo lint` | clang-tidy によるコードリント |
 | `ordo watch <cmd>` | ファイル変更を監視してコマンドを再実行 |
-| `ordo install` | システムパスへのインストール |
+| `ordo install` | プロジェクトをシステムパスにインストール |
 | `ordo package` | 配布用アーカイブの作成 |
-| `ordo publish` | Ordoレジストリへの公開 |
-| `ordo import cmake` | CMakeLists.txtからのインポート |
-| `ordo generate` | IDE設定の生成（vscode, clion, clangd 等） |
-| `ordo toolchain` | ツールチェインの一覧・インストール |
-| `ordo ci` | CIパイプラインの実行 |
+| `ordo publish` | Ordo レジストリへの公開 |
+| `ordo import cmake` | CMakeLists.txt からのインポート |
+| `ordo generate` | IDE 設定ファイルの生成（vscode、clion、clangd など） |
+| `ordo toolchain` | ツールチェインの一覧表示・インストール |
+| `ordo ci` | CI パイプラインステップの実行 |
 | `ordo doctor` | 開発環境の診断 |
 | `ordo config show` | 解決済み設定の表示 |
 | `ordo run-script` | ユーザー定義スクリプトの実行 |
-| `ordo self update` | Ordo自体のアップデート |
+| `ordo self update` | Ordo 自体の更新 |

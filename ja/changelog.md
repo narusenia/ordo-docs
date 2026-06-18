@@ -1,6 +1,23 @@
 # 変更履歴
 
-## v0.1.1 <Badge type="tip" text="latest" />
+## v0.1.2 <Badge type="tip" text="latest" />
+
+_2026-06-18_
+
+### 機能追加
+
+- **CLI出力スタイル** — 3つの出力モード: `default`（アイコン + スピナー）、`minimal`（プレーンテキスト、Ninja出力パススルー）、`cargo-like`（Cargo風の右寄せ動詞）。`--style` フラグ、`ORDO_CLI_STYLE` 環境変数、または `Ordo.toml` の `[cli] style` で設定可能。
+- **ロックファイルのバージョン記録** — `Ordo.lock` が各プロバイダの実際の解決バージョンを記録（vcpkg、pkg-config、conan、git、path）。`0.0.0` スタブを解消。
+- **git依存のチェックサム** — git依存に `checksum = "git:<commit-hash>"` フィールドを追加。
+- **リゾルバのロックピン留め** — リゾルバが `Ordo.lock` のピン留めバージョンを読み込み（Cargoと同様）。`ordo update` でバージョンを更新。
+
+### バグ修正
+
+- **パス依存のキャッシュ** — ワークスペースのDAGビルドで、ビルド済みのパス依存をキャッシュ。複数メンバーが共有する依存の冗長な再ビルドと重複した `Finished` 行を排除。
+
+---
+
+## v0.1.1
 
 _2026-06-17_
 

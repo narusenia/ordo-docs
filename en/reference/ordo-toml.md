@@ -54,6 +54,19 @@ compiler = "clang"
 linker = "lld"
 ```
 
+## `[cli]`
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `style` | string | No | `"default"` | Output style: `"default"`, `"minimal"`, `"cargo-like"` |
+
+Controls the display style of CLI output. Can also be overridden with the `--style` flag or `ORDO_CLI_STYLE` environment variable. Priority: CLI flag > env var > `Ordo.toml` > default.
+
+```toml
+[cli]
+style = "minimal"
+```
+
 ## `[dependencies]`
 
 Dependencies can be declared in several formats. See the [Dependencies guide](/en/guide/dependencies) for usage details.

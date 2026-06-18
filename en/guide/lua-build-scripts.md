@@ -1,9 +1,5 @@
 # Lua Build Scripts
 
-::: warning UNRELEASED
-Lua build scripts are available in the development branch and will be included in the next release.
-:::
-
 When using git dependencies, the cloned repository may need to be compiled before it can be used. Lua build scripts give you explicit control over how a dependency is built, within a sandboxed environment.
 
 ## Overview

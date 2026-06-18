@@ -1,9 +1,5 @@
 # Lua Build Script API
 
-::: warning UNRELEASED
-Lua build scripts are available in the development branch and will be included in the next release.
-:::
-
 This page documents the runtime environment, context variables, and API functions available inside Lua build scripts. For a usage guide with examples, see the [Lua Build Scripts guide](/en/guide/lua-build-scripts).
 
 ## Runtime

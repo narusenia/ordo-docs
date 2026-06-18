@@ -1,6 +1,23 @@
 # Changelog
 
-## v0.1.1 <Badge type="tip" text="latest" />
+## v0.1.2 <Badge type="tip" text="latest" />
+
+_2026-06-18_
+
+### Features
+
+- **CLI output styles** — Three output modes: `default` (icons + spinners), `minimal` (plain text, Ninja passthrough), `cargo-like` (Cargo-style right-aligned verbs). Configure via `--style` flag, `ORDO_CLI_STYLE` env var, or `[cli] style` in Ordo.toml.
+- **Lock file versions** — `Ordo.lock` now records actual resolved versions from each provider (vcpkg, pkg-config, conan, git, path) instead of `0.0.0` stubs.
+- **Git checksums** — Git dependencies now include `checksum = "git:<commit-hash>"` for supply chain integrity.
+- **Resolver lock pinning** — Resolver reads pinned versions from `Ordo.lock` (like Cargo). Use `ordo update` to bump versions.
+
+### Fixes
+
+- **Path dependency caching** — Workspace members built via DAG order are cached. Eliminates redundant rebuilds and duplicate `Finished` lines when multiple members share a path dependency.
+
+---
+
+## v0.1.1
 
 _2026-06-17_
 

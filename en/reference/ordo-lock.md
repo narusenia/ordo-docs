@@ -55,7 +55,7 @@ Each entry in the `[[package]]` array represents a resolved dependency.
 | `name` | string | Yes | Package name |
 | `version` | string | Yes | Resolved version |
 | `source` | string | Yes | Source URI with type prefix |
-| `checksum` | string | No | `sha256:<hex>` integrity hash |
+| `checksum` | string | No | Integrity hash. Git deps: `git:<commit-hash>`, others: `sha256:<hex>` (future) |
 | `script-hash` | string | No | SHA-256 hash of the Lua build script (git deps with `with` only) |
 
 ### Source Prefixes
