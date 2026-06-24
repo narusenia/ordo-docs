@@ -110,7 +110,7 @@ spdlog = { version = "1.14", provider = "vcpkg", features = ["async"] }
 | フィールド | 型 | 説明 |
 |-----------|------|------|
 | `version` | string | バージョン制約（SemVer） |
-| `provider` | string | `"vcpkg"`、`"conan"`、`"pkg-config"`、`"system"` |
+| `provider` | string | `"vcpkg"`、`"conan"`、`"pkg-config"`、`"system"`、`"brew"`、`"nix"`、`"pacman"`、`"clib"`、`"nuget"` |
 | `path` | string | ローカルプロジェクトへの相対パス |
 | `git` | string | Git リポジトリ URL |
 | `tag` | string | Git タグ（`git` と併用） |
@@ -120,6 +120,8 @@ spdlog = { version = "1.14", provider = "vcpkg", features = ["async"] }
 | `optional` | bool | フィーチャーが有効にした場合のみリンクされます |
 | `workspace` | bool | `[workspace.dependencies]` から継承します |
 | `features` | string[] | プロバイダー固有のフィーチャーを有効にします |
+| `alias` | string | TOMLキーと異なる実際のパッケージ名 |
+| `link-name` | string/string[] | リンク時のライブラリ名をオーバーライド |
 
 ## `[dev-dependencies]`
 
@@ -282,6 +284,40 @@ deploy = "rsync -av target/release/ server:/opt/"
 [ci]
 steps = ["fmt --check", "lint", "build", "test", "build --release"]
 ```
+
+## `[target.'cfg(...)'.dependencies]`
+
+プラットフォーム条件付き依存。`cfg()` 条件がビルドプラットフォームに一致する場合のみ組み込まれる。
+
+```toml
+[target.'cfg(macos)'.dependencies]
+openssl = { provider = "brew" }
+
+[target.'cfg(linux)'.dependencies]
+openssl = { provider = "pacman" }
+
+[target.'cfg(windows)'.dependencies]
+openssl = { provider = "nuget" }
+
+[target.'cfg(any(macos, linux))'.dependencies]
+libuv = { provider = "pkg-config" }
+```
+
+### サポートされる条件
+
+| 条件 | 一致対象 |
+|------|---------|
+| `cfg(macos)` | macOS |
+| `cfg(linux)` | Linux |
+| `cfg(windows)` | Windows |
+| `cfg(unix)` | macOS または Linux |
+| `cfg(x86_64)` | x86_64 アーキテクチャ |
+| `cfg(aarch64)` | ARM64 アーキテクチャ |
+| `cfg(not(...))` | 否定 |
+| `cfg(all(...))` | すべての条件に一致 |
+| `cfg(any(...))` | いずれかの条件に一致 |
+
+`[target.'cfg(...)'.dev-dependencies]` も使用可能。
 
 ## `[target.<triple>]`
 

@@ -1,6 +1,28 @@
 # 変更履歴
 
-## v0.1.2 <Badge type="tip" text="latest" />
+## v0.1.3 <Badge type="tip" text="latest" />
+
+_2026-06-24_
+
+### 機能追加
+
+- **ビルドプロファイル** — `[profile.dev]`、`[profile.release]`、カスタムプロファイルに完全対応。`--profile` フラグ、opt-level、debug、lto、defines、コンパイラ/リンカフラグ。
+- **フィーチャーフラグ** — Cargo風の `[features]` セクション。`dep:name` による依存有効化、`--features`、`--no-default-features`、`--all-features`。`ORDO_FEATURE_*` プリプロセッサ定義を生成。
+- **開発依存** — `[dev-dependencies]` セクション。テストビルド時のみ組み込み。`ordo tree` で `[dev]` マーカーを表示。
+- **エイリアスとリンク名** — `alias` フィールドでパッケージのローカル名を変更。`link-name` でリンク時のライブラリ名をオーバーライド。`ordo add` に `--alias` と `--link-name` フラグを追加。
+- **複数パッケージ一括追加** — `ordo add raylib fmt glfw -P vcpkg` のように複数パッケージを一度に追加可能。部分的な失敗にも対応しサマリーを表示。
+- **システムレベルプロバイダ** — 3つのパッシブ（検出専用）プロバイダを追加:
+  - **brew** (macOS) — `brew info --json`、`brew --prefix` でインクルード/ライブラリパスを取得
+  - **nix** — `nix profile list`（モダン）/ `nix-env -q`（レガシー）
+  - **pacman** (Arch Linux) — `pacman -Qi` でパッケージ検出とバージョン取得
+- **プロジェクトレベルプロバイダ** — 2つのアクティブ（インストール）プロバイダを追加:
+  - **clib** — clibレジストリからCライブラリをインストール
+  - **nuget** — Windows C++ネイティブライブラリ用NuGetパッケージをインストール
+- **プラットフォーム条件付き依存** — `[target.'cfg(macos)'.dependencies]` 構文。`cfg(macos)`、`cfg(linux)`、`cfg(windows)`、`cfg(unix)`、アーキテクチャ条件（`x86_64`、`aarch64`）、`not()`/`all()`/`any()` コンビネータに対応。
+
+---
+
+## v0.1.2
 
 _2026-06-18_
 

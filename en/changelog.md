@@ -1,6 +1,28 @@
 # Changelog
 
-## v0.1.2 <Badge type="tip" text="latest" />
+## v0.1.3 <Badge type="tip" text="latest" />
+
+_2026-06-24_
+
+### Features
+
+- **Build profiles** — Full profile support with `[profile.dev]`, `[profile.release]`, and custom named profiles. `--profile` flag, opt-level, debug, lto, defines, compiler/linker flags.
+- **Feature flags** — Cargo-style `[features]` with `dep:name` activation, `--features`, `--no-default-features`, `--all-features`. Generates `ORDO_FEATURE_*` preprocessor defines.
+- **Dev dependencies** — `[dev-dependencies]` section, included only in test builds. Shown in `ordo tree` with `[dev]` marker.
+- **Alias & link-name** — `alias` field to use a different local name for a package. `link-name` to override library names at link time. `--alias` and `--link-name` flags in `ordo add`.
+- **Multi-add** — `ordo add` accepts multiple packages in one invocation: `ordo add raylib fmt glfw -P vcpkg`. Partial failure support with summary output.
+- **System-level providers** — Three new passive (detection-only) providers:
+  - **brew** (macOS) — `brew info --json`, `brew --prefix` for include/lib paths
+  - **nix** — `nix profile list` (modern) / `nix-env -q` (legacy)
+  - **pacman** (Arch Linux) — `pacman -Qi` for detection and version
+- **Project-level providers** — Two new active (install) providers:
+  - **clib** — Installs C libraries from the clib registry
+  - **nuget** — Installs NuGet packages for Windows C++ native libraries
+- **Platform-conditional dependencies** — `[target.'cfg(macos)'.dependencies]` syntax. Supports `cfg(macos)`, `cfg(linux)`, `cfg(windows)`, `cfg(unix)`, architecture conditions (`x86_64`, `aarch64`), and `not()`/`all()`/`any()` combinators.
+
+---
+
+## v0.1.2
 
 _2026-06-18_
 

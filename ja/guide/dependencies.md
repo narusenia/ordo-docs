@@ -1,6 +1,6 @@
 # 依存管理
 
-Ordo は統一されたインターフェースを通じて 5 つの依存プロバイダをサポートしています。ひとつのプロジェクト内でプロバイダを自由に組み合わせることができます。
+Ordo は統一されたインターフェースを通じて 10 の依存プロバイダをサポートしている。ひとつのプロジェクト内でプロバイダを自由に組み合わせ可能。
 
 ## 依存の追加
 
@@ -70,6 +70,51 @@ pthread = { provider = "system" }
 ```
 
 リンカコマンドに `-l<name>` を直接追加します。`m` (数学ライブラリ)、`pthread`、`dl` などの標準システムライブラリに使用します。インストールや検索は行われないため、ライブラリが存在しない場合はリンク時にエラーになります。
+
+### brew
+
+```toml
+[dependencies]
+openssl = { provider = "brew" }
+```
+
+macOS用の検出専用プロバイダ。Homebrewフォーミュラがインストール済みか確認し、`brew --prefix` でインクルード/ライブラリパスを取得。未インストール時は `brew install` コマンドを提案。
+
+### nix
+
+```toml
+[dependencies]
+openssl = { provider = "nix" }
+```
+
+Nix用の検出専用プロバイダ。`nix profile list`（モダン）または `nix-env -q`（レガシー）で確認。未検出時は `nix profile install nixpkgs#<name>` を提案。
+
+### pacman
+
+```toml
+[dependencies]
+openssl = { provider = "pacman" }
+```
+
+Arch Linux用の検出専用プロバイダ。`pacman -Qi` でインストール済みパッケージを確認。標準システムパス（`/usr/include`、`/usr/lib`）を使用。未インストール時は `sudo pacman -S <name>` を提案。
+
+### clib
+
+```toml
+[dependencies]
+jsmn = { provider = "clib" }
+```
+
+[clibレジストリ](https://github.com/clibs/clib)からCライブラリをプロジェクトの `deps/` にインストールするアクティブプロバイダ。`clib` CLI が必要。
+
+### nuget
+
+```toml
+[dependencies]
+openssl = { provider = "nuget" }
+```
+
+Windows C++ライブラリ用のアクティブプロバイダ。`nuget install` を実行し、パッケージからネイティブのインクルード/ライブラリディレクトリをスキャン。`nuget` CLI が必要。
 
 ### git
 

@@ -1,6 +1,6 @@
 # Dependencies
 
-Ordo supports five dependency providers through a unified interface. You can mix providers freely within a single project.
+Ordo supports ten dependency providers through a unified interface. You can mix providers freely within a single project.
 
 ## Adding Dependencies
 
@@ -70,6 +70,51 @@ pthread = { provider = "system" }
 ```
 
 Adds `-l<name>` directly to the linker command. Use this for standard system libraries like `m` (math), `pthread`, or `dl`. No installation or lookup is performed — if the library is missing, linking will fail.
+
+### brew
+
+```toml
+[dependencies]
+openssl = { provider = "brew" }
+```
+
+Detection-only provider for macOS. Verifies that a Homebrew formula is installed and retrieves include/lib paths via `brew --prefix`. If not installed, suggests the `brew install` command.
+
+### nix
+
+```toml
+[dependencies]
+openssl = { provider = "nix" }
+```
+
+Detection-only provider for Nix. Checks `nix profile list` (modern) or `nix-env -q` (legacy). If not found, suggests `nix profile install nixpkgs#<name>`.
+
+### pacman
+
+```toml
+[dependencies]
+openssl = { provider = "pacman" }
+```
+
+Detection-only provider for Arch Linux. Checks `pacman -Qi` for installed packages. Uses standard system paths (`/usr/include`, `/usr/lib`). If not installed, suggests `sudo pacman -S <name>`.
+
+### clib
+
+```toml
+[dependencies]
+jsmn = { provider = "clib" }
+```
+
+Active provider that installs C libraries from the [clib registry](https://github.com/clibs/clib) into `deps/` in your project. Requires the `clib` CLI.
+
+### nuget
+
+```toml
+[dependencies]
+openssl = { provider = "nuget" }
+```
+
+Active provider for Windows C++ libraries. Runs `nuget install` and scans the package for native include/lib directories. Requires the `nuget` CLI.
 
 ### git
 

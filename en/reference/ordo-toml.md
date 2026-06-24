@@ -110,7 +110,7 @@ spdlog = { version = "1.14", provider = "vcpkg", features = ["async"] }
 | Field | Type | Description |
 |-------|------|-------------|
 | `version` | string | Version constraint (SemVer) |
-| `provider` | string | `"vcpkg"`, `"conan"`, `"pkg-config"`, `"system"` |
+| `provider` | string | `"vcpkg"`, `"conan"`, `"pkg-config"`, `"system"`, `"brew"`, `"nix"`, `"pacman"`, `"clib"`, `"nuget"` |
 | `path` | string | Relative path to a local project |
 | `git` | string | Git repository URL |
 | `tag` | string | Git tag (with `git`) |
@@ -120,6 +120,8 @@ spdlog = { version = "1.14", provider = "vcpkg", features = ["async"] }
 | `optional` | bool | Only linked when a feature enables it |
 | `workspace` | bool | Inherit from `[workspace.dependencies]` |
 | `features` | string[] | Provider-specific features to enable |
+| `alias` | string | Real package name when using a different TOML key |
+| `link-name` | string/string[] | Override library name(s) for linking |
 
 ## `[dev-dependencies]`
 
@@ -282,6 +284,40 @@ Default steps:
 [ci]
 steps = ["fmt --check", "lint", "build", "test", "build --release"]
 ```
+
+## `[target.'cfg(...)'.dependencies]`
+
+Platform-conditional dependencies. Only included when the `cfg()` condition matches the build platform.
+
+```toml
+[target.'cfg(macos)'.dependencies]
+openssl = { provider = "brew" }
+
+[target.'cfg(linux)'.dependencies]
+openssl = { provider = "pacman" }
+
+[target.'cfg(windows)'.dependencies]
+openssl = { provider = "nuget" }
+
+[target.'cfg(any(macos, linux))'.dependencies]
+libuv = { provider = "pkg-config" }
+```
+
+### Supported conditions
+
+| Condition | Matches |
+|-----------|---------|
+| `cfg(macos)` | macOS |
+| `cfg(linux)` | Linux |
+| `cfg(windows)` | Windows |
+| `cfg(unix)` | macOS or Linux |
+| `cfg(x86_64)` | x86_64 architecture |
+| `cfg(aarch64)` | ARM64 architecture |
+| `cfg(not(...))` | Negation |
+| `cfg(all(...))` | All conditions must match |
+| `cfg(any(...))` | Any condition must match |
+
+Target sections can also contain `[target.'cfg(...)'.dev-dependencies]`.
 
 ## `[target.<triple>]`
 

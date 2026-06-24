@@ -81,27 +81,31 @@ ordo run -- --config myconfig.toml
 
 プロジェクトタイプが `executable` でない場合は失敗します。
 
-### `ordo add <SPEC>`
+### `ordo add <SPEC>...`
 
-`Ordo.toml` に依存関係を追加します。
+`Ordo.toml` に1つ以上の依存関係を追加する。
 
 ```sh
 ordo add vcpkg:fmt@11.2.0
 ordo add conan:sdl@3.4.8
 ordo add system:m
 ordo add git:fmtlib/fmt@11.1.0
-ordo add raylib                  # インタラクティブにプロバイダーを選択
+ordo add raylib                     # インタラクティブにプロバイダー選択
+ordo add fmt glfw raylib -P vcpkg   # 複数パッケージ一括
+ordo add z -P system --alias zlib --link-name z
 ```
 
-spec のフォーマットは `[provider:]name[@version]` です。
+spec フォーマット: `[provider:]name[@version]`。複数specを一度に渡せる。
 
 | フラグ | 説明 |
 |------|------|
-| `-P, --provider <NAME>` | プロバイダーを明示的に指定します |
-| `--no-verify` | プロバイダーへの検証をスキップします（オフライン利用向け） |
-| `--with <SCRIPT>` | Lua ビルドスクリプトのパスを指定します（git 依存関係のみ） |
+| `-P, --provider <NAME>` | プロバイダー指定（全specに適用） |
+| `--no-verify` | プロバイダー検証スキップ（オフライン用） |
+| `--with <SCRIPT>` | Lua ビルドスクリプトパス（git依存のみ、単一spec時のみ） |
+| `--alias <NAME>` | プロバイダー解決に使う実パッケージ名（単一spec時のみ） |
+| `--link-name <NAME>` | リンク時ライブラリ名オーバーライド、カンマ区切り（単一spec時のみ） |
 
-spec と `--provider` フラグの両方でプロバイダーが省略された場合、Ordo は対話的に選択を促します。
+プロバイダー未指定時は対話的に選択（単一specのみ）。複数specの場合は `-P` または `provider:name` 構文を使用。
 
 ### `ordo update [NAME]`
 

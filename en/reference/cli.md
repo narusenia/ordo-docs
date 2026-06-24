@@ -81,9 +81,9 @@ ordo run -- --config myconfig.toml
 
 Fails if the project type is not `executable`.
 
-### `ordo add <SPEC>`
+### `ordo add <SPEC>...`
 
-Add a dependency to `Ordo.toml`.
+Add one or more dependencies to `Ordo.toml`.
 
 ```sh
 ordo add vcpkg:fmt@11.2.0
@@ -91,17 +91,21 @@ ordo add conan:sdl@3.4.8
 ordo add system:m
 ordo add git:fmtlib/fmt@11.1.0
 ordo add raylib                  # Interactive provider selection
+ordo add fmt glfw raylib -P vcpkg   # Multiple packages
+ordo add z -P system --alias zlib --link-name z
 ```
 
-The spec format is `[provider:]name[@version]`.
+The spec format is `[provider:]name[@version]`. Multiple specs can be passed in one invocation.
 
 | Flag | Description |
 |------|-------------|
-| `-P, --provider <NAME>` | Specify the provider explicitly |
+| `-P, --provider <NAME>` | Specify the provider (applies to all specs) |
 | `--no-verify` | Skip provider verification (offline use) |
-| `--with <SCRIPT>` | Lua build script path (git dependencies only) |
+| `--with <SCRIPT>` | Lua build script path (git deps only, single spec only) |
+| `--alias <NAME>` | Real package name for provider resolution (single spec only) |
+| `--link-name <NAME>` | Override library name(s) for linking, comma-separated (single spec only) |
 
-If the provider is omitted from both the spec and the `--provider` flag, Ordo prompts you to choose interactively.
+If the provider is omitted from both the spec and the `--provider` flag, Ordo prompts you to choose interactively (single spec only). For multi-add without `-P`, use the `provider:name` syntax.
 
 ### `ordo update [NAME]`
 
