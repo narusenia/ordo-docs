@@ -1,6 +1,23 @@
 # Changelog
 
-## v0.1.3 <Badge type="tip" text="latest" />
+## v0.1.4 <Badge type="tip" text="latest" />
+
+_2026-06-29_
+
+### Features
+
+- **Feature flags in `ordo run`** — `ordo run` now accepts `--features`, `--all-features`, and `--no-default-features`, matching `ordo build`.
+- **Feature propagation** — Feature defines from path dependencies and workspace members now propagate to consumer compilations. When a library is built with features enabled, its preprocessor defines (e.g., `MATHLIB_LOGGING`) are passed to any project that includes its headers.
+- **`dep_name/feature` forwarding** — Cargo-style feature forwarding syntax: `full = ["mathlib/simd", "mathlib/logging"]`. Enabling a feature on the parent activates the specified features on the dependency.
+- **Path dependency `features = [...]`** — Specify features directly on path dependencies: `mathlib = { path = "...", features = ["simd"] }`.
+
+### Fixes
+
+- **Cached path dep feature defines** — When a workspace member was already built and cached, its feature defines were not propagated to consumers. Now correctly resolved on cache hits.
+
+---
+
+## v0.1.3
 
 _2026-06-24_
 
