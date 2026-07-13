@@ -1,6 +1,31 @@
 # 変更履歴
 
-## v0.1.4 <Badge type="tip" text="latest" />
+## v0.2.0 <Badge type="tip" text="latest" />
+
+_2026-07-13_
+
+### 機能追加
+
+- **`ordo test` コマンド** — C/C++テストの自動検出と実行。GTest/Catch2/doctestフレームワーク対応、Ninjaベースのテストバイナリコンパイル。`-p` フラグでワークスペース対応。
+- **`ordo fmt` コマンド** — clang-formatによるソースファイルのフォーマット。`.clang-format` 未存在時はLLVMベースのデフォルトを自動生成。`--check` モードとワークスペースビルドに対応。
+- **`ordo lint` コマンド** — clang-tidyによるソースファイルのリント。`.clang-tidy` 設定を自動生成。`--fix` モードで `--fix-errors` も渡すように対応。
+- **`ordo check` コマンド** — Ninja経由の構文のみコンパイルチェック。フルビルドより高速。ワークスペース対応。
+- **`ordo run-script` コマンド** — `Ordo.toml` の `[scripts]` セクションに定義されたスクリプトを実行。
+- **fmt/lint/checkのワークスペース対応** — 3コマンドすべてが `-p/--package` フラグに対応し、ワークスペースメンバーを横断して実行可能に。
+- **MSVC Ninja生成** — NinjaビルドファイルがMSVCツールチェインに対応。`deps = msvc` + `/showIncludes`、`link.exe`/`lib.exe` コマンド、MSVCコンパイル・リンクフラグ。
+- **プラットフォーム対応出力** — バイナリ出力の拡張子がターゲットプラットフォームに適応: `.exe`/`.lib`/`.dll`（Windows）、`.a`/`.dylib`（macOS）、`.a`/`.so`（Linux）。
+
+### バグ修正
+
+- **vcpkg版数正規化** — `ordo add vcpkg:raylib@6.0` でバージョンが `6.0.0` に誤変換されて失敗する問題を修正。
+- **Windowsコンパイラ検出** — `which` を Windows では `where` に置換。MSVC `cl.exe` の検出は `--version` ではなくstderrを読むように変更。
+- **`ordo lint --fix`** — `--fix` と同時に `--fix-errors` を渡すように修正。警告のみの出力はエラーではなく警告スタイルで表示。
+- **`ordo clean --package`** — ワークスペースの個別メンバーのターゲットを正しくクリーンアップするように修正。
+- **テストのインクルードパス** — テストビルドが依存を解決し、正しいプロジェクトルートでインクルードパスを使用するように修正。
+
+---
+
+## v0.1.4
 
 _2026-06-29_
 

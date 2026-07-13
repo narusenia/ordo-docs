@@ -1,6 +1,31 @@
 # Changelog
 
-## v0.1.4 <Badge type="tip" text="latest" />
+## v0.2.0 <Badge type="tip" text="latest" />
+
+_2026-07-13_
+
+### Features
+
+- **`ordo test` command** — Run C/C++ tests with automatic test discovery, GTest/Catch2/doctest framework support, and Ninja-based test binary compilation. Workspace-aware with `-p` flag.
+- **`ordo fmt` command** — Format source files using clang-format. Auto-generates `.clang-format` with LLVM-based defaults if absent. Supports `--check` mode and workspace builds.
+- **`ordo lint` command** — Lint source files using clang-tidy. Auto-generates `.clang-tidy` config. Supports `--fix` mode with `--fix-errors`.
+- **`ordo check` command** — Syntax-only compilation check via Ninja, much faster than a full build. Workspace-aware.
+- **`ordo run-script` command** — Execute scripts defined in `[scripts]` section of `Ordo.toml`.
+- **Workspace support for fmt/lint/check** — All three commands now support `-p/--package` flag and run across workspace members.
+- **MSVC Ninja generation** — Ninja build files now support the MSVC toolchain: `deps = msvc` with `/showIncludes`, `link.exe`/`lib.exe` commands, MSVC compile and link flags.
+- **Platform-aware output** — Binary output extensions adapt to the target platform: `.exe`/`.lib`/`.dll` (Windows), `.a`/`.dylib` (macOS), `.a`/`.so` (Linux).
+
+### Fixes
+
+- **vcpkg version normalization** — `ordo add vcpkg:raylib@6.0` no longer fails by incorrectly padding the version to `6.0.0`.
+- **Windows compiler detection** — `which` replaced with `where` on Windows. MSVC `cl.exe` detection now reads stderr instead of relying on `--version`.
+- **`ordo lint --fix`** — Now passes `--fix-errors` alongside `--fix`. Warnings-only output uses warn style instead of error.
+- **`ordo clean --package`** — Correctly cleans individual workspace member targets.
+- **Test include paths** — Test builds now resolve dependencies and use the correct project root for include paths.
+
+---
+
+## v0.1.4
 
 _2026-06-29_
 
