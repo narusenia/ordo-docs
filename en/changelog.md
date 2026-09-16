@@ -1,6 +1,25 @@
 # Changelog
 
-## v0.2.0 <Badge type="tip" text="latest" />
+## v0.3.0 <Badge type="tip" text="latest" />
+
+_2026-09-16_
+
+### Features
+
+- **Faber build engine (beta)** — A built-in parallel build executor. Set `engine = "faber"` under `[build]` to build without Ninja installed. Runs across all logical CPU cores by default (`-j` to override) and rebuilds incrementally from timestamps plus compiler depfiles.
+- **Faber support for `ordo test` and `ordo check`** — Test binaries and syntax-only checks run on the same engine, so `engine = "faber"` covers those paths too.
+- **Arsenal toolchain manager (beta)** — `ordo toolchain install | list | which | remove | update | clean` downloads and version-manages external tools. Ninja comes from the official GitHub Releases; versions install side by side and can be pinned with `ninja = "1.12"` under `[toolchain]`. Tool lookup prefers an Arsenal-managed binary, then falls back to `PATH`.
+- **Automatic Ninja provisioning** — When a build needs Ninja and none is found, Ordo offers to install it via Arsenal instead of failing. The prompt is skipped when `CI` or `ORDO_YES` is set.
+- **Build directory lock** — A second build against the same build directory waits for the first to finish instead of interleaving with it.
+
+### Fixes
+
+- **`compile_commands.json` system include paths** — Compiler system include paths are now recorded in the compilation database, so clang-tidy no longer reports missing standard headers under GCC.
+- **Release binaries no longer link OpenSSL** — Arsenal's downloader uses rustls, so the published binaries carry no OpenSSL dependency.
+
+---
+
+## v0.2.0
 
 _2026-07-13_
 

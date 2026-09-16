@@ -146,6 +146,31 @@ ordo clean -p core      # Clean a specific workspace member
 | `--cache` | Also clear external build cache (ccache/sccache) |
 | `-p, --package <NAME>` | Clean a specific workspace member |
 
+### `ordo toolchain <SUBCOMMAND>` <Badge type="warning" text="beta" />
+
+Download and version-manage external tools. Ninja is the only managed tool for now; it is fetched from the official `ninja-build/ninja` GitHub Releases. Versions install side by side, and tool lookup prefers an Arsenal-managed binary before falling back to `PATH`.
+
+```sh
+ordo toolchain install ninja              # Install the latest Ninja
+ordo toolchain install ninja --version 1.12
+ordo toolchain list                       # List installed tools
+ordo toolchain which ninja                # Print the path to the binary
+ordo toolchain update ninja               # Update to the latest version
+ordo toolchain remove ninja 1.12          # Remove one version
+ordo toolchain clean                      # Remove all installed tools
+```
+
+| Subcommand | Description |
+|------------|-------------|
+| `install <TOOL> [--version <V>]` | Install a tool, optionally at a specific version |
+| `list` | List installed tools and versions |
+| `which <TOOL>` | Show the path to a tool's binary |
+| `update [TOOL]` | Update a tool, or all tools if omitted |
+| `remove <TOOL> <VERSION>` | Remove a specific version |
+| `clean` | Remove all installed tools |
+
+Pin a version per project with `ninja` under `[toolchain]` in `Ordo.toml`. When a build needs Ninja and none is found, Ordo offers to install it; the prompt is skipped when `CI` or `ORDO_YES` is set.
+
 ## Not Yet Implemented
 
 The following commands are defined but not yet functional:
@@ -162,7 +187,6 @@ The following commands are defined but not yet functional:
 | `ordo publish` | Publish to the Ordo registry |
 | `ordo import cmake` | Import from a CMakeLists.txt |
 | `ordo generate` | Generate IDE configs (vscode, clion, clangd, etc.) |
-| `ordo toolchain` | List or install toolchains |
 | `ordo ci` | Run CI pipeline steps |
 | `ordo doctor` | Diagnose the development environment |
 | `ordo config show` | Show resolved configuration |

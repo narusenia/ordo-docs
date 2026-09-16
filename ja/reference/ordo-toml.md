@@ -45,6 +45,7 @@ cpp = "c++20"
 |-----------|------|------|---------|------|
 | `compiler` | string | No | 自動検出 | `"clang"`、`"gcc"`、`"msvc"`、`"clang-cl"` |
 | `linker` | string | No | コンパイラのデフォルト | `"lld"`、`"mold"`、`"gold"`、`"default"` |
+| `ninja` | string | No | 最新 | Arsenal が管理する Ninja のバージョン（例: `"1.12"`） |
 
 コンパイラが指定されていない場合、Ordo は Clang > GCC > MSVC の優先順位で自動検出します。
 
@@ -52,7 +53,10 @@ cpp = "c++20"
 [toolchain]
 compiler = "clang"
 linker = "lld"
+ninja = "1.12"
 ```
+
+`ninja` は `ordo toolchain install ninja` が解決するバージョンを固定します。Ordo は Arsenal 管理のバイナリを優先し、無ければ `PATH` にフォールバックします。
 
 ## `[cli]`
 
@@ -153,12 +157,14 @@ prefix = "MYAPP_"       # デフォルト: "ORDO_FEATURE_"
 
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|------|------|---------|------|
+| `engine` | string | No | `"ninja"` | ビルドエンジン: `"ninja"` または `"faber"`（beta、内蔵のため Ninja のインストール不要） |
 | `jobs` | int | No | `0`（自動） | Ninja の並列コンパイルジョブ数 |
 | `pch` | string | No | — | プリコンパイル済みヘッダーのソースパス |
 | `unity` | bool | No | `false` | ユニティビルドを有効にします |
 
 ```toml
 [build]
+engine = "faber"
 jobs = 8
 pch = "include/pch.hpp"
 unity = true

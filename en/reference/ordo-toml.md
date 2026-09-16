@@ -45,6 +45,7 @@ cpp = "c++20"
 |-------|------|----------|---------|-------------|
 | `compiler` | string | No | auto-detect | `"clang"`, `"gcc"`, `"msvc"`, `"clang-cl"` |
 | `linker` | string | No | compiler default | `"lld"`, `"mold"`, `"gold"`, `"default"` |
+| `ninja` | string | No | latest | Ninja version managed by Arsenal, e.g. `"1.12"` |
 
 Ordo auto-detects the compiler if not specified, with priority: Clang > GCC > MSVC.
 
@@ -52,7 +53,10 @@ Ordo auto-detects the compiler if not specified, with priority: Clang > GCC > MS
 [toolchain]
 compiler = "clang"
 linker = "lld"
+ninja = "1.12"
 ```
+
+`ninja` pins the version `ordo toolchain install ninja` resolves to. Ordo prefers an Arsenal-managed binary and falls back to `PATH`.
 
 ## `[cli]`
 
@@ -153,12 +157,14 @@ When a feature is enabled, Ordo defines a preprocessor macro (e.g., `MYAPP_LOGGI
 
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
+| `engine` | string | No | `"ninja"` | Build engine: `"ninja"` or `"faber"` (beta, built in — no Ninja install needed) |
 | `jobs` | int | No | `0` (auto) | Parallel compilation jobs for Ninja |
 | `pch` | string | No | — | Path to precompiled header source |
 | `unity` | bool | No | `false` | Enable unity build |
 
 ```toml
 [build]
+engine = "faber"
 jobs = 8
 pch = "include/pch.hpp"
 unity = true

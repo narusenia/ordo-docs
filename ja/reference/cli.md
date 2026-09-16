@@ -146,6 +146,31 @@ ordo clean -p core      # 特定のワークスペースメンバーをクリー
 | `--cache` | 外部ビルドキャッシュ（ccache/sccache）も削除します |
 | `-p, --package <NAME>` | 特定のワークスペースメンバーをクリーンします |
 
+### `ordo toolchain <SUBCOMMAND>` <Badge type="warning" text="beta" />
+
+外部ツールのダウンロードとバージョン管理を行います。現在の管理対象は Ninja のみで、公式の `ninja-build/ninja` GitHub Releases から取得します。複数バージョンが併存でき、ツール解決は Arsenal 管理のバイナリを優先し、無ければ `PATH` にフォールバックします。
+
+```sh
+ordo toolchain install ninja              # 最新の Ninja をインストール
+ordo toolchain install ninja --version 1.12
+ordo toolchain list                       # インストール済みツールの一覧
+ordo toolchain which ninja                # バイナリのパスを表示
+ordo toolchain update ninja               # 最新バージョンに更新
+ordo toolchain remove ninja 1.12          # 特定バージョンを削除
+ordo toolchain clean                      # インストール済みツールをすべて削除
+```
+
+| サブコマンド | 説明 |
+|------------|------|
+| `install <TOOL> [--version <V>]` | ツールをインストールします（バージョン指定可） |
+| `list` | インストール済みのツールとバージョンを一覧表示します |
+| `which <TOOL>` | ツールのバイナリのパスを表示します |
+| `update [TOOL]` | ツールを更新します（省略時はすべて） |
+| `remove <TOOL> <VERSION>` | 特定バージョンを削除します |
+| `clean` | インストール済みのツールをすべて削除します |
+
+プロジェクトごとのバージョン固定は `Ordo.toml` の `[toolchain]` の `ninja` で行います。ビルドに Ninja が必要で見つからない場合はインストールを提案します（`CI` または `ORDO_YES` 設定時はプロンプトを省略）。
+
 ## 未実装のコマンド
 
 以下のコマンドは定義されていますが、まだ機能していません。
@@ -162,7 +187,6 @@ ordo clean -p core      # 特定のワークスペースメンバーをクリー
 | `ordo publish` | Ordo レジストリへの公開 |
 | `ordo import cmake` | CMakeLists.txt からのインポート |
 | `ordo generate` | IDE 設定ファイルの生成（vscode、clion、clangd など） |
-| `ordo toolchain` | ツールチェインの一覧表示・インストール |
 | `ordo ci` | CI パイプラインステップの実行 |
 | `ordo doctor` | 開発環境の診断 |
 | `ordo config show` | 解決済み設定の表示 |
