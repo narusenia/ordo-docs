@@ -2,8 +2,9 @@
 
 ## 前提条件
 
-- [Ninja](https://ninja-build.org/) ビルドシステム
-- C/C++ コンパイラ (Clang, GCC, or MSVC)
+- C/C++ コンパイラ (Clang, GCC, or MSVC) — Ordo が代わりに用意しない唯一のもの
+- オプション: [Ninja](https://ninja-build.org/)。ビルドで必要になった時点で Ordo がインストールを提案します。`[build] engine = "faber"` なら Ninja 自体が不要です
+- オプション: `ordo fmt` / `ordo lint` 用の clang-format と clang-tidy。clang-format は同じ仕組みで必要時にインストールされます
 - オプション: [vcpkg](https://vcpkg.io/), [Conan](https://conan.io/), pkg-config（使用する依存プロバイダに応じて必要）
 
 ## インストール

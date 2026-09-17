@@ -2,8 +2,9 @@
 
 ## Prerequisites
 
-- [Ninja](https://ninja-build.org/) build system
-- A C/C++ compiler (Clang, GCC, or MSVC)
+- A C/C++ compiler (Clang, GCC, or MSVC) — the one thing Ordo will not install for you
+- Optional: [Ninja](https://ninja-build.org/). Ordo offers to install it the first time a build needs it, and `[build] engine = "faber"` builds without it entirely
+- Optional: clang-format and clang-tidy for `ordo fmt` / `ordo lint`. clang-format is installed on demand the same way
 - Optional: [vcpkg](https://vcpkg.io/), [Conan](https://conan.io/), pkg-config (depending on which dependency providers you use)
 
 ## Installation
