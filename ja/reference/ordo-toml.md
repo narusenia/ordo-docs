@@ -45,7 +45,8 @@ cpp = "c++20"
 |-----------|------|------|---------|------|
 | `compiler` | string | No | 自動検出 | `"clang"`、`"gcc"`、`"msvc"`、`"clang-cl"` |
 | `linker` | string | No | コンパイラのデフォルト | `"lld"`、`"mold"`、`"gold"`、`"default"` |
-| `ninja` | string | No | 最新 | Arsenal が管理する Ninja のバージョン（例: `"1.12"`） |
+| `ninja` | string | No | 最新 | `ordo toolchain` が管理する Ninja のバージョン（例: `"1.12"`） |
+| `clang-format` | string | No | 最新 | `ordo toolchain` が管理する clang-format のバージョン（例: `"23"`） |
 
 コンパイラが指定されていない場合、Ordo は Clang > GCC > MSVC の優先順位で自動検出します。
 
@@ -54,9 +55,10 @@ cpp = "c++20"
 compiler = "clang"
 linker = "lld"
 ninja = "1.12"
+clang-format = "23"
 ```
 
-`ninja` は `ordo toolchain install ninja` が解決するバージョンを固定します。Ordo は Arsenal 管理のバイナリを優先し、無ければ `PATH` にフォールバックします。
+バージョンを固定すると `ordo toolchain install` が解決する版が決まり、そのツールを使うすべての場面で固定が効きます。Ordo は管理下のバイナリを優先し、無ければ `PATH` にフォールバックしますが、`--version` がピンと一致しない `PATH` 上のバイナリは採用しません。前方一致で判定するため、`"1.12"` は `1.12.1` に一致します。
 
 ## `[cli]`
 
@@ -237,8 +239,18 @@ import-std = true
 
 | フィールド | 型 | 必須 | デフォルト | 説明 |
 |-----------|------|------|---------|------|
-| `tool` | string | No | `"clang-format"` | フォーマットツール |
-| `style` | string | No | `".clang-format"` | スタイル設定ファイルのパス |
+| `tool` | string | No | 自動解決 | 実行するフォーマッタのパスまたは名前。明示すると、ツール解決と `[toolchain]` のピンの両方より優先されます |
+| `style` | string | No | Ordo の既定値 | プロジェクトに `.clang-format` が無いときに使う clang-format の YAML |
+
+`ordo fmt` は、プロジェクトまたはその親ディレクトリに `.clang-format`（`_clang-format` も可）があればそれを使います。無い場合に限り、`style`（未設定なら Ordo の既定値: LLVM スタイル、`IndentWidth: 4`、`ColumnLimit: 100`）を clang-format に直接渡します。プロジェクトにファイルは書き込まれません。実ファイルとして残したい場合は `ordo generate clang-format` を使います。
+
+```toml
+[fmt]
+style = """
+BasedOnStyle: Google
+ColumnLimit: 120
+"""
+```
 
 ## `[lint]`
 

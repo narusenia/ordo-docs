@@ -45,7 +45,8 @@ cpp = "c++20"
 |-------|------|----------|---------|-------------|
 | `compiler` | string | No | auto-detect | `"clang"`, `"gcc"`, `"msvc"`, `"clang-cl"` |
 | `linker` | string | No | compiler default | `"lld"`, `"mold"`, `"gold"`, `"default"` |
-| `ninja` | string | No | latest | Ninja version managed by Arsenal, e.g. `"1.12"` |
+| `ninja` | string | No | latest | Ninja version managed by `ordo toolchain`, e.g. `"1.12"` |
+| `clang-format` | string | No | latest | clang-format version managed by `ordo toolchain`, e.g. `"23"` |
 
 Ordo auto-detects the compiler if not specified, with priority: Clang > GCC > MSVC.
 
@@ -54,9 +55,10 @@ Ordo auto-detects the compiler if not specified, with priority: Clang > GCC > MS
 compiler = "clang"
 linker = "lld"
 ninja = "1.12"
+clang-format = "23"
 ```
 
-`ninja` pins the version `ordo toolchain install ninja` resolves to. Ordo prefers an Arsenal-managed binary and falls back to `PATH`.
+A pin fixes the version `ordo toolchain install` resolves to, and is enforced wherever that tool is used: Ordo prefers a managed binary, falls back to `PATH`, and rejects a `PATH` copy whose `--version` does not match the pin. Prefix matching applies, so `"1.12"` accepts `1.12.1`.
 
 ## `[cli]`
 
@@ -237,8 +239,18 @@ import-std = true
 
 | Field | Type | Required | Default | Description |
 |-------|------|----------|---------|-------------|
-| `tool` | string | No | `"clang-format"` | Formatting tool |
-| `style` | string | No | `".clang-format"` | Style config file path |
+| `tool` | string | No | resolved automatically | Path or name of the formatter to run. Set explicitly, it overrides tool resolution and any `[toolchain]` pin |
+| `style` | string | No | Ordo defaults | clang-format YAML used when the project has no `.clang-format` |
+
+`ordo fmt` uses a `.clang-format` (or `_clang-format`) from the project or any parent directory when one exists. Only when none does, `style` — or Ordo's defaults of LLVM style, `IndentWidth: 4`, `ColumnLimit: 100` — is passed to clang-format directly. Nothing is written into the project; use `ordo generate clang-format` to commit a real file.
+
+```toml
+[fmt]
+style = """
+BasedOnStyle: Google
+ColumnLimit: 120
+"""
+```
 
 ## `[lint]`
 
