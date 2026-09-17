@@ -146,18 +146,115 @@ ordo clean -p core      # 特定のワークスペースメンバーをクリー
 | `--cache` | 外部ビルドキャッシュ（ccache/sccache）も削除します |
 | `-p, --package <NAME>` | 特定のワークスペースメンバーをクリーンします |
 
-### `ordo toolchain <SUBCOMMAND>` <Badge type="warning" text="beta" />
+### `ordo test`
 
-外部ツールのダウンロードとバージョン管理を行います。現在の管理対象は Ninja のみで、公式の `ninja-build/ninja` GitHub Releases から取得します。複数バージョンが併存でき、ツール解決は Arsenal 管理のバイナリを優先し、無ければ `PATH` にフォールバックします。
+プロジェクトのテストをビルドして実行します。
 
 ```sh
-ordo toolchain install ninja              # 最新の Ninja をインストール
-ordo toolchain install ninja --version 1.12
-ordo toolchain list                       # インストール済みツールの一覧
-ordo toolchain which ninja                # バイナリのパスを表示
-ordo toolchain update ninja               # 最新バージョンに更新
-ordo toolchain remove ninja 1.12          # 特定バージョンを削除
-ordo toolchain clean                      # インストール済みツールをすべて削除
+ordo test                   # すべてのテストを実行
+ordo test --filter parser   # 名前が一致するテストのみ実行
+ordo test --release         # release プロファイルでテスト
+ordo test -p core           # 特定のワークスペースメンバーをテスト
+```
+
+| フラグ | 説明 |
+|------|------|
+| `--filter <NAME>` | 名前が一致するテストのみ実行します |
+| `-j, --jobs <N>` | テストの並列実行数 |
+| `--release` | release プロファイルを使用します |
+| `--profile <NAME>` | 名前付きプロファイルを使用します（`--release` と併用不可） |
+| `--features <LIST>` | フィーチャーを有効化します（カンマ区切り） |
+| `--no-default-features` | デフォルトフィーチャーを無効化します |
+| `--all-features` | すべてのフィーチャーを有効化します |
+| `-p, --package <NAME>` | 特定のワークスペースメンバーをテストします |
+
+テストソースの既定の置き場は `tests/` です（`[test] src` で変更可）。フレームワークはファイルごとに `#include` 行から判定され、`gtest/gtest.h` または `gmock/gmock.h` なら GoogleTest、`catch2/` のヘッダなら Catch2、`doctest.h` なら doctest、いずれにも該当しなければ自前の `main` を持つプレーンなテストバイナリとして扱われます。明示的に固定する場合は `[test] framework` を指定します。
+
+### `ordo check`
+
+バイナリを生成せずに構文エラーだけを検査します。フルビルドより大幅に高速です。
+
+```sh
+ordo check
+ordo check --release
+ordo check -p core
+```
+
+| フラグ | 説明 |
+|------|------|
+| `--release` | release プロファイルで検査します |
+| `--profile <NAME>` | 名前付きプロファイルで検査します（`--release` と併用不可） |
+| `--features <LIST>` | フィーチャーを有効化します（カンマ区切り） |
+| `--no-default-features` | デフォルトフィーチャーを無効化します |
+| `--all-features` | すべてのフィーチャーを有効化します |
+| `-p, --package <NAME>` | 特定のワークスペースメンバーを検査します |
+
+### `ordo fmt`
+
+`src/`、`include/`、`tests/`、`test/` 以下の C/C++ ソースを clang-format で整形します。
+
+```sh
+ordo fmt                    # ファイルを直接書き換え
+ordo fmt --check            # 差分を報告するだけで書き換えない（CI 向け）
+ordo fmt -p core            # 特定のワークスペースメンバーを整形
+```
+
+| フラグ | 説明 |
+|------|------|
+| `--check` | 書き換えずに差分を報告します。差分があれば非ゼロで終了します |
+| `-p, --package <NAME>` | 特定のワークスペースメンバーを整形します |
+
+**スタイル。** プロジェクトまたはその親ディレクトリに `.clang-format`（`_clang-format` も可）があれば clang-format がそれを使い、Ordo は介入しません。無い場合は Ordo の既定値（LLVM スタイル、`IndentWidth: 4`、`ColumnLimit: 100`）を渡します。**このときプロジェクトにファイルは書き込まれません。** 既定値を変えるには `Ordo.toml` の `[fmt] style` に clang-format の YAML を書きます:
+
+```toml
+[fmt]
+style = """
+BasedOnStyle: Google
+ColumnLimit: 120
+"""
+```
+
+エディタなど他のツールにも読ませたい場合は [`ordo generate clang-format`](#ordo-generate-target) で実ファイルとして書き出します。ファイル無しでスタイルを渡す方式は clang-format 14 以降が必要で、それより古い場合は対処方法を含むエラーになります。
+
+**どの clang-format が使われるか。** `[fmt] tool` が設定されていればそれが最優先です。それ以外の場合、[`ordo toolchain`](#ordo-toolchain-subcommand) が管理するバイナリ → `PATH` → Xcode 同梱（macOS）の順で最初に見つかったものを使い、どれも無ければインストールを提案します。バージョンは `[toolchain]` の `clang-format` で固定でき、**候補はすべてこのピンと照合されます**。誰かの `PATH` の手前にある別バージョンが整形結果を黙って変えることはありません。
+
+### `ordo lint`
+
+C/C++ ソースを clang-tidy で静的解析します。
+
+```sh
+ordo lint
+ordo lint --fix             # clang-tidy が修正できるものを適用
+ordo lint -p core
+```
+
+| フラグ | 説明 |
+|------|------|
+| `--fix` | 自動修正を適用します（`--fix-errors` も同時に渡されます） |
+| `-p, --package <NAME>` | 特定のワークスペースメンバーを解析します |
+
+lint は `compile_commands.json` を参照します。存在しない場合は先にビルドを実行します。`.clang-tidy` がプロジェクトに無ければ Ordo の既定値で生成されます。コンパイラと clang-tidy が別のツールチェイン由来の場合（GCC に LLVM の clang-tidy を組み合わせた場合など）、Ordo はコンパイラのシステムインクルードパスをコンパイルデータベースに追加した上で警告を出し、clang-tidy が標準ヘッダを見失わないようにします。
+
+### `ordo run-script <NAME>`
+
+`Ordo.toml` の `[scripts]` に定義したスクリプトを実行します。
+
+```sh
+ordo run-script deploy
+```
+
+### `ordo toolchain <SUBCOMMAND>` <Badge type="warning" text="beta" />
+
+Ordo が外部プロセスとして呼び出すツールのダウンロードとバージョン管理を行います。Ninja は公式の `ninja-build/ninja` GitHub Releases から、clang-format は LLVM のバイナリを同梱した PyPI の wheel から取得します（Ordo が動作する全プラットフォームを覆う唯一の配布形態のため）。複数バージョンが併存でき、ツール解決は管理下のバイナリを優先し、無ければ `PATH` にフォールバックします。
+
+```sh
+ordo toolchain install ninja                    # 最新の Ninja をインストール
+ordo toolchain install clang-format --version 23
+ordo toolchain list                             # インストール済みツールの一覧
+ordo toolchain which clang-format               # バイナリのパスを表示
+ordo toolchain update                           # インストール済みのものをすべて更新
+ordo toolchain remove ninja 1.12                # 特定バージョンを削除
+ordo toolchain clean                            # インストール済みツールをすべて削除
 ```
 
 | サブコマンド | 説明 |
@@ -165,11 +262,26 @@ ordo toolchain clean                      # インストール済みツールを
 | `install <TOOL> [--version <V>]` | ツールをインストールします（バージョン指定可） |
 | `list` | インストール済みのツールとバージョンを一覧表示します |
 | `which <TOOL>` | ツールのバイナリのパスを表示します |
-| `update [TOOL]` | ツールを更新します（省略時はすべて） |
+| `update [TOOL]` | ツールを更新します（省略時はインストール済みのものすべて） |
 | `remove <TOOL> <VERSION>` | 特定バージョンを削除します |
 | `clean` | インストール済みのツールをすべて削除します |
 
-プロジェクトごとのバージョン固定は `Ordo.toml` の `[toolchain]` の `ninja` で行います。ビルドに Ninja が必要で見つからない場合はインストールを提案します（`CI` または `ORDO_YES` 設定時はプロンプトを省略）。
+管理対象のツール: `ninja`、`clang-format`。
+
+プロジェクトごとのバージョン固定は `Ordo.toml` の `[toolchain]` の `ninja` / `clang-format` で行います。コマンドの実行に必要なツールがどこにも見つからない場合、Ordo は失敗せずにインストールを提案します（`CI` または `ORDO_YES` 設定時はプロンプトを省略して実行）。
+
+### `ordo generate <TARGET>`
+
+プロジェクトから設定ファイルを生成します。
+
+```sh
+ordo generate clang-format   # fmt のスタイルから .clang-format を書き出す
+```
+
+| ターゲット | 状態 |
+|--------|--------|
+| `clang-format` | `[fmt] style`（未設定なら Ordo の既定値）から `.clang-format` を生成します。既存ファイルがある場合は上書きせずエラーになります |
+| `cmake`、`presets`、`vscode`、`clion`、`clangd`、`github-actions`、`gitlab-ci` | 未実装 |
 
 ## 未実装のコマンド
 
@@ -177,18 +289,12 @@ ordo toolchain clean                      # インストール済みツールを
 
 | コマンド | 説明 |
 |---------|------|
-| `ordo test` | フレームワーク自動検出によるテスト実行 |
-| `ordo check` | バイナリを生成せずに構文チェック |
-| `ordo fmt` | clang-format によるコードフォーマット |
-| `ordo lint` | clang-tidy によるコードリント |
 | `ordo watch <cmd>` | ファイル変更を監視してコマンドを再実行 |
 | `ordo install` | プロジェクトをシステムパスにインストール |
 | `ordo package` | 配布用アーカイブの作成 |
 | `ordo publish` | Ordo レジストリへの公開 |
 | `ordo import cmake` | CMakeLists.txt からのインポート |
-| `ordo generate` | IDE 設定ファイルの生成（vscode、clion、clangd など） |
 | `ordo ci` | CI パイプラインステップの実行 |
 | `ordo doctor` | 開発環境の診断 |
 | `ordo config show` | 解決済み設定の表示 |
-| `ordo run-script` | ユーザー定義スクリプトの実行 |
 | `ordo self update` | Ordo 自体の更新 |
